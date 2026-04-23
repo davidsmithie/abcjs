@@ -20,6 +20,9 @@ Plugin.prototype.init = function (abcTune, tuneNumber, params, staffNumber, tabS
   this.isTabBig = tabSettings.isTabBig;
   this.tabSymbolOffset = tabSettings.tabSymbolOffset;
   this.capo = params.capo;
+  if (params.tabprefs) {
+    this.tabprefs = params.tabprefs;
+  }
   this.transpose = params.visualTranspose;
   this.hideTabSymbol = params.hideTabSymbol;
   this.tablature = new StringTablature(this.nbLines,

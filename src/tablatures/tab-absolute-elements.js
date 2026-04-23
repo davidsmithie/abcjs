@@ -199,6 +199,7 @@ TabAbsoluteElements.prototype.build = function (plugin,
       source.children.splice(0, 0, keySig);
     }  
   }
+  var noteCnt = 0;
   for (var ii = 0; ii < source.children.length; ii++) {
     var absChild = source.children[ii];
     var absX = absChild.x;
@@ -275,6 +276,18 @@ TabAbsoluteElements.prototype.build = function (plugin,
         defNote = { el_type: "note", startChar: absChild.abcelem.startChar, endChar: absChild.abcelem.endChar, notes: [] };
         for (var ll = 0; ll < tabPos.notes.length; ll++) {
           var curNote = tabPos.notes[ll];
+          if (plugin.tabprefs && plugin.tabprefs.length >= noteCnt) {
+            if (ll === 0 && tabPos.notes.length === 1 && plugin.tabprefs[noteCnt].str) {
+              curNote.str = plugin.tabprefs[noteCnt].str;
+              curNote.num = plugin.tabprefs[noteCnt].num;
+            } else if (Array.isArray(plugin.tabprefs[noteCnt])) {
+              if (plugin.tabprefs[noteCnt].length >= ll + 1) {
+                curNote.str = plugin.tabprefs[noteCnt][ll].str;
+                curNote.num = plugin.tabprefs[noteCnt][ll].num;
+              }
+
+            }
+          }
           if (curNote.graces) {
             for (var mm = 0; mm < curNote.graces.length; mm++) {
               var defGrace = { el_type: "note", startChar: absChild.abcelem.startChar, endChar: absChild.abcelem.endChar, notes: [], grace: true };
@@ -285,6 +298,13 @@ TabAbsoluteElements.prototype.build = function (plugin,
               tabVoice.push(defGrace);
             }
           }
+          // if (plugin.tabprefs && plugin.tabprefs.length >= noteCnt) {
+          //   var tabpref = plugin.tabprefs[noteCnt];
+          //   if (tabpref  && plugin.tabprefs[noteCnt].str) {
+          //     curNote.str = tabpref.str;
+          //     curNote.num = tabpref.num;
+          //   }
+          // }          
           var tabNoteRelative = buildRelativeTabNote(plugin, abs.x+absChild.heads[ll].dx, defNote, curNote, false);
           abs.children.push(tabNoteRelative);
         }
@@ -293,6 +313,7 @@ TabAbsoluteElements.prototype.build = function (plugin,
           tabVoice.push(defNote);
           dest.children.push(abs);
         }
+        noteCnt++;
         break;
     }
   }
